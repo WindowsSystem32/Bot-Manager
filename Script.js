@@ -197,7 +197,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             var res5 = false;
             var res6 = '';
             try {
-              sS2[sender] = getSrc(msg);
+              sS2[sender] = getSrc(msg).split(ln);
               delete sL[sender];
               res5 = true;
             } catch(e) {
