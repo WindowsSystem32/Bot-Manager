@@ -199,8 +199,9 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
               sS2[sender] = getSrc(lnk);
               delete sL[sender];
               res5 = true;
-            } catch(e) {}
-            replier.reply((res5? aI[2] : aI[3]) + "'" + msg + "'(으)로부터 스크립트를 복제" + (res5? "했" : "하지 못했") + "습니다.");
+            } catch(e) {
+              replier.reply((res5? aI[2] : aI[3]) + "'" + msg + "'(으)로부터 스크립트를 복제" + (res5? "했" : "하지 못했") + "습니다.");
+            }
           } else {
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
