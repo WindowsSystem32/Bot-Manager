@@ -41,7 +41,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         m[sender] = 0;
       }
       if (msg.startsWith(pre)) {
-        msg = msg.substring(pre.length);
+        msg = msg.substr(pre.length);
         if (msg == "목록") {
           var sLst = Api.getScriptNames();
           var prn1 = "스크립트";
@@ -61,9 +61,9 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         } else if (msg == "스크립트") {
           replier.reply("현재 선택된 스크립트는 " + (iN(sS[sender])? "없습" : "'" + sS[sender] + "' 입") + "니다.");
         } else if (msg.startsWith("스크립트 ")) {
-          msg = msg.substring(5);
+          msg = msg.substr(5);
           var rSR = rS(msg);
-          if (rSR == null || rSR == undefined) {
+          if (iN(rSR)) {
             replier.reply(aI[3] + "스크립트를 읽을 수 없어요!");
           } else {
             if (!(!iN(sS[sender]) && sSvd == false)) {
@@ -84,7 +84,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         } else if (msg == "줄") {
           replier.reply("현재 선택된 줄은 " + (iN(sL[sender])? "없습" : sL[sender] + "번째 줄입") + "니다.");
         } else if (msg.startsWith("줄 ")) {
-          msg = msg.substring(2);
+          msg = msg.substr(2);
           if (!iN(sS[sender])) {
             var l = strToNum2(msg);
             if (l >= 1 && l <= sS2[sender].length) {
@@ -96,17 +96,19 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("수정 ")) {
-          if (!iN(sL)) {
-            
-            sS2[sender][sL[sender] - 1] = msg.substring(3);
-//줄바꿈 감지 및 새로고침 테스트용 주석입니다(수정 기능에서 생성한 주석)
-            if(msg.substr(3).includes(ln)){
-              replier.reply('줄바꿈이 감지되었습니다. 새로고침 합니다!');
-              sS2[sender] = sS2[sender].join(ln).split(ln);
+          if (!iN(sS[sender])) {
+            if (!iN(sL[sender])) {
+              sS2[sender][sL[sender] - 1] = msg.substr(3);
+              if(msg.substr(3).includes(ln)){
+                replier.reply('줄바꿈이 감지되었습니다. 새로고침 합니다!');
+                sS2[sender] = sS2[sender].join(ln).split(ln);
+              }
+              sSvd[sender] = false;
+            } else {
+              replier.reply(aI[4] + "편집할 줄을 먼저 선택해 주세요!");
             }
-            sSvd[sender] = false;
           } else {
-            replier.reply(aI[4] + "편집할 줄을 먼저 선택해 주세요!");
+            replier.reply(aI[4] + "편집할 스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg == "로그") {
           if (!iN(sS[sender])) {
@@ -125,7 +127,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           sS2[sender].join(ln));
         } else if (msg == "전체 코드") {
           if (!iN(sS[sender])) {
-            replier.reply(sS2[sender].map((e, i) => "0".repeat(String(sS2[sender].length).length - String(i + 1).length) + String(i + 1) + "| " + e).join(ln));
+            replier.reply(sS2[sender].map((e, i) => (i + 1 + '').padStart((sS2[sender].length + '').length, '0') + "| " + e).join(ln));
           } else {
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
@@ -138,7 +140,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
         } else if (msg == "코드") {
           if (!iN(sS[sender])) {
             if (!iN(sL[sender])) {
-              replier.reply("0".repeat(String(sS2[sender].length).length - String(sL[sender]).length) + String(sL[sender]) + "| " + sS2[sender][sL[sender] - 1]);
+              replier.reply((sL[sender] + '').padStart((sS2[sender].length + '').length) + "| " + sS2[sender][sL[sender] - 1]);
             } else {
               replier.reply(aI[4] + "줄을 먼저 선택해 주세요!");
             }
@@ -153,8 +155,8 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("컴파일 ")) {
-          replier.reply("컴파일 중...");
-          replier.reply(Api.compile(msg.substring(4))? aI[2] + "컴파일 성공!" : aI[3] + "컴파일 실패!");
+          replier.reply(aI[1] + "컴파일 중...");
+          replier.reply(Api.compile(msg.substr(4))? aI[2] + "컴파일 성공!" : aI[3] + "컴파일 실패!");
         } else if (msg == "전원") {
           if (!iN(sS[sender])) {
             replier.reply("이 스크립트의 전원은 " + (Api.isOn(sS[sender])? "켜" : "꺼") + "져 있습니다.");
@@ -162,7 +164,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("전원 ")) {
-          msg = msg.substring(3);
+          msg = msg.substr(3);
           replier.reply("'" + msg + "' 스크립트의 전원은 " + (Api.isOn(msg)? "켜" : "꺼") + "져 있습니다.");
         } else if (msg == "켜기" || msg.toLowerCase() == "on") {
           if (!iN(sS[sender])) {
@@ -172,7 +174,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("켜기 ") || msg.toLowerCase().startsWith("on ")) {
-          msg = msg.substring(3);
+          msg = msg.substr(3);
           var res2 = Api.on(msg);
           replier.reply((res2? aI[2] : aI[3]) + "'" + msg + "' 스크립트의 전원을 " + (res2? "켰" : "켜지 못했") + "습니다.");
         } else if (msg == "끄기" || msg.toLowerCase() == "off") {
@@ -183,15 +185,15 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("끄기 ") || msg.toLowerCase().startsWith("off ")) {
-          msg = msg.substring(msg.startsWith("끄기 ")? 3 : 4);
+          msg = msg.substr(msg.startsWith("끄기 ")? 3 : 4);
           var res4 = Api.on(msg);
           replier.reply((res4? aI[2] : aI[3]) + "'" + msg + "' 스크립트의 전원을 " + (res4? "껐" : "끄지 못했") + "습니다.");
         } else if (msg.startsWith("복제 ")) {
-          msg = msg.substring(3);
+          msg = msg.substr(3);
           if (!iN(sS[sender])) {
             var res5 = false;
             try {
-              sS2[sender] = org.jsoup.Jsoup.connect(msg).get().select('body').html().split(ln);
+              sS2[sender] = getSrc(lnk);
               delete sL[sender];
               res5 = true;
             } catch(e) {}
@@ -199,24 +201,46 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           } else {
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
-        }
-      } else if (m[sender] == 1) {
-        if (msg == "저장" || msg == "무시" || msg == "취소") {
-          if (msg == "저장" || msg == "무시") {
-            if (msg == "저장") {
-              replier.reply(wS(sS[sender], sS2[sender].join(ln))? aI[2] + "편집 중이던 스크립트를 저장하였습니다!" : aI[3] + "스크립트 저장에서 문제가 발생하였습니다.." + ln + 
-              "편집 중이던 스크립트:" + ln + 
-              lw2 + ln + 
-              sS2[sender].join(ln));
+        } else if (msg.startsWith("생성 ")) {
+          msg = msg.substr(3);
+          if (msg.startsWith(/[1-3] /)) {
+            //msg = msg.substr(2);
+            try {
+              crSrc(msg.substr(2), ((Number(msg[0]) <= 2)? 1 : 2), true, (Number(msg[0] == 2)))
+            } catch (e) {
+              var eM = '' + e;
+              if (eM == "scriptName") {
+                replier.reply(aI[3] + "스크립트 이름에 특수문자가 들어가면 안됩니다!");
+              } else {
+                replier.reply(aI[3] + "기타 오류:" + ln + 
+                eM);
+              }
             }
-            sSvd[sender] = true;
-            sS[sender] = dCp(sS3[sender]);
-            sS2[sender] = dCp(sS4[sender]);
-            replier.reply(aI[2] + "스크립트를 불러왔습니다!");
+          } else {
+            replier.reply(aI[2] + "사용법:" + ln + 
+            pre + "생성 [1-3] [스크립트 이름, 특수문자 포함 X]" + ln + 
+            " - 1: 레거시 API, 매개변수 통합 X," + ln + 
+            " - 2: 레거시 API, 매개변수 통합 O," + ln + 
+            " - 3: API2");
           }
-          delete sS3[sender];
-          delete sS4[sender];
         }
+      }
+    } else if (m[sender] == 1) {
+      if (msg == "저장" || msg == "무시" || msg == "취소") {
+        if (msg == "저장" || msg == "무시") {
+          if (msg == "저장") {
+            replier.reply(wS(sS[sender], sS2[sender].join(ln))? aI[2] + "편집 중이던 스크립트를 저장하였습니다!" : aI[3] + "스크립트 저장에서 문제가 발생하였습니다.." + ln + 
+            "편집 중이던 스크립트:" + ln + 
+            lw2 + ln + 
+            sS2[sender].join(ln));
+          }
+          sSvd[sender] = true;
+          sS[sender] = dCp(sS3[sender]);
+          sS2[sender] = dCp(sS4[sender]);
+          replier.reply(aI[2] + "스크립트를 불러왔습니다!");
+        }
+        delete sS3[sender];
+        delete sS4[sender];
       }
     }
   } else {
@@ -237,14 +261,7 @@ function lL3_2(lP) {
 }
 
 function lL3(sN) {
-  var sLog = lL2(sN);
-  return "'" + sN + "'의 로그" + (sLog == null? "를 읽을 수 없습니다." : "입니다." + ln + 
-  lw2 + ln + 
-  sLog);
-}
-
-function lL2(sN) {
-  return lL(sD(sN) + "log.json");
+  return lL3_2(sD(sN) + "log.json");
 }
 
 function lL(lP) {
@@ -345,6 +362,12 @@ function FLog(logType, logStr) {
   }
 }
 
+function getSrc(lnk) {
+  var g = org.jsoup.Jsoup.connect(lnk).get();
+  g.outputSettings().prettyPrint(false);
+  return String(g.body()).replace(/^<body>/gm, '').replace(/<\/body>$/gm, '');
+}
+
 function date() {
   var dt = new Date();
   var days = "일월화수목금토";
@@ -365,7 +388,7 @@ function date() {
 
 function strToNum(str) {
   var out = -1;
-  out = Number(str);
+  out = +str;
   if (Number.isNaN(out)) {
     out = -1;
   }
@@ -374,7 +397,7 @@ function strToNum(str) {
 
 function strToNum2(str) {
   var out = -1;
-  out = Number(str);
+  out = +str;
   if (Number.isNaN(out)) {
     out = -1;
   } else if (Math.round(out) != out) {
@@ -389,6 +412,115 @@ function isInt(int) {
   out = !(Number.isNaN(n));
   return out;
 }
+
+function crSrc(name, apiLev, scriptPower, useUnifiedParams) {
+  if (apiLev == 1 || apiLev == 2) {
+    if (!name.includes(/[^0-9a-zA-Z ㄱ-ㅎㅏ-ㅣ가-힣]]/)) { //김유래님 감사합니다(/[^0-9a-zA-Z ㄱ-ㅎㅏ-ㅣ가-힣]]/)!
+      const dS1 = "const scriptName = \"" + name + "\";" + ln + 
+      "/**" + ln + 
+      " * (string) room" + ln + 
+      " * (string) sender" + ln + 
+      " * (boolean) isGroupChat" + ln + 
+      " * (void) replier.reply(message)" + ln + 
+      " * (boolean) replier.reply(room, message, hideErrorToast = false) // 전송 성공시 true, 실패시 false 반환" + ln + 
+      " * (string) imageDB.getProfileBase64()" + ln + 
+      " * (string) packageName" + ln + 
+      " */" + ln + 
+      "function response(" + (useUnifiedParams? "params" : "room, msg, sender, isGroupChat, replier, imageDB, packageName") + ") {" + ln + 
+      "  " + ln + 
+      "}" + ln + 
+      ln + 
+      "//아래 4개의 메소드는 액티비티 화면을 수정할때 사용됩니다." + ln + 
+      "function onCreate(savedInstanceState, activity) {" + ln + 
+      "  var textView = new android.widget.TextView(activity);" + ln + 
+      "  textView.setText(\"Hello, World!\");" + ln + 
+      "  textView.setTextColor(android.graphics.Color.DKGRAY);" + ln + 
+      "  activity.setContentView(textView);" + ln + 
+      "}" + ln + 
+      ln + 
+      "function onStart(activity) {}" + ln + 
+      ln + 
+      "function onResume(activity) {}" + ln + 
+      ln + 
+      "function onPause(activity) {}" + ln + 
+      ln + 
+      "function onStop(activity) {}"; //레거시 API
+      const dS2 = "const bot = BotManager.getCurrentBot();" + ln +
+      ln + 
+      "/**" + ln +
+      " * (string) msg.content: 메시지의 내용" + ln +
+      " * (string) msg.room: 메시지를 받은 방 이름" + ln +
+      " * (User) msg.author: 메시지 전송자" + ln +
+      " * (string) msg.author.name: 메시지 전송자 이름" + ln +
+      " * (Image) msg.author.avatar: 메시지 전송자 프로필 사진" + ln +
+      " * (string) msg.author.avatar.getBase64()" + ln +
+      " * (boolean) msg.isGroupChat: 단체/오픈채팅 여부" + ln +
+      " * (boolean) msg.isDebugRoom: 디버그룸에서 받은 메시지일 시 true" + ln +
+      " * (string) msg.packageName: 메시지를 받은 메신저의 패키지명" + ln +
+      " * (void) msg.reply(string): 답장하기" + ln +
+      " */" + ln +
+      "function onMessage(msg) {}" + ln +
+      "bot.addListener(Event.MESSAGE, onMessage);" + ln +
+      ln +
+      "/**" + ln +
+      " * (string) msg.content: 메시지의 내용" + ln +
+      " * (string) msg.room: 메시지를 받은 방 이름" + ln +
+      " * (User) msg.author: 메시지 전송자" + ln +
+      " * (string) msg.author.name: 메시지 전송자 이름" + ln +
+      " * (Image) msg.author.avatar: 메시지 전송자 프로필 사진" + ln +
+      " * (string) msg.author.avatar.getBase64()" + ln +
+      " * (boolean) msg.isDebugRoom: 디버그룸에서 받은 메시지일 시 true" + ln +
+      " * (boolean) msg.isGroupChat: 단체/오픈채팅 여부" + ln +
+      " * (string) msg.packageName: 메시지를 받은 메신저의 패키지명" + ln +
+      " * (void) msg.reply(string): 답장하기" + ln +
+      " * (string) msg.command: 명령어 이름" + ln +
+      " * (Array) msg.args: 명령어 인자 배열" + ln +
+      " */" + ln +
+      "function onCommand(msg) {}" + ln +
+      "bot.setCommandPrefix(\"@\"); //@로 시작하는 메시지를 command로 판단" + ln +
+      "bot.addListener(Event.COMMAND, onCommand); " + ln +
+      ln +
+      "function onCreate(savedInstanceState, activity) {" + ln +
+      "  var textView = new android.widget.TextView(activity);" + ln +
+      "  textView.setText(\"Hello, World!\");" + ln +
+      "  textView.setTextColor(android.graphics.Color.DKGRAY);" + ln +
+      "  activity.setContentView(textView);" + ln +
+      "}" + ln +
+      ln +
+      "function onStart(activity) {}" + ln +
+      ln +
+      "function onResume(activity) {}" + ln +
+      ln +
+      "function onPause(activity) {}" + ln +
+      ln +
+      "function onStop(activity) {}" + ln +
+      ln +
+      "function onRestart(activity) {}" + ln +
+      ln +
+      "function onDestroy(activity) {}" + ln +
+      ln + 
+      "function onBackPressed(activity) {}" + ln +
+      ln + 
+      "bot.addListener(Event.Activity.CREATE, onCreate);" + ln +
+      "bot.addListener(Event.Activity.START, onStart);" + ln +
+      "bot.addListener(Event.Activity.RESUME, onResume);" + ln +
+      "bot.addListener(Event.Activity.PAUSE, onPause);" + ln +
+      "bot.addListener(Event.Activity.STOP, onStop);" + ln +
+      "bot.addListener(Event.Activity.RESTART, onRestart);" + ln +
+      "bot.addListener(Event.Activity.DESTROY, onDestroy);" + ln +
+      "bot.addListener(Event.Activity.BACK_PRESSED, onBackPressed);"; //API2
+      var f1 = ((apiLev == 1)? dS1 : dS2);
+      var f2 = {"main": name + ".js", "option": {"apiLevel": apiLev, "useUnifiedParams": Boolean(useUnifiedParams), "useBabel": false, "scriptPower": Boolean(scriptPower)}};
+      FileStream.write(sD(name) + "bot.json", JSON.stringify(f2, 0, 1));
+      FileStream.write(sP(name), f1);
+    } else {
+      throw new Error("scriptName");
+    }
+  } else {
+    throw new Error("apiLev");
+  }
+}
+
 
 //아래 4개의 메소드는 액티비티 화면을 수정할때 사용됩니다.
 function onCreate(savedInstanceState, activity) {
