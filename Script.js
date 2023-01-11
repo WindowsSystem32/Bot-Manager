@@ -276,6 +276,7 @@ function lL(lP) {
     {"a":"Log.e","b":3,"c":"2022/02/02 11:28:41 "}
     {"a":"로그 내용","b":1/2/3(1: 정보, 2: 디버그, 3: 오류),"c":"yyyy/MM/dd hh:mm:ss"}
   */
+  FLog(0, "lL('" + lP + "')");
   try {
     return JSON.parse(FileStream.read(lP)).map((e) => (["🔵", "⚗", "🔴"])[clamp(e.b, 1, 3) - 1] + e.a + ln + 
     e.c).join(ln + 
