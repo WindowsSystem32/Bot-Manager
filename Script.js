@@ -415,7 +415,7 @@ function getSrc(lnk) {
 }
 
 function crSrc(name, apiLev, scriptPower, useUnifiedParams) {
-  if (apiLev = 1 || apiLev == 2) {
+  if (apiLev == 1 || apiLev == 2) {
     if (!name.includes(/[^0-9a-zA-Z ㄱ-ㅎㅏ-ㅣ가-힣]]/)) { //김유래님 감사합니다(/[^0-9a-zA-Z ㄱ-ㅎㅏ-ㅣ가-힣]]/)!
       const dS1 = "const scriptName = \"" + name + "\";" + ln + 
       "/**" + ln + 
