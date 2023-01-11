@@ -112,13 +112,16 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           }
         } else if (msg == "로그") {
           if (!iN(sS[sender])) {
+            replier.reply(aI[1] + "로그를 불러오는 중입니다!");
             replier.reply(lL3(sS[sender]));
           } else {
             replier.reply(aI[4] + "스크립트를 먼저 선택해 주세요!");
           }
         } else if (msg.startsWith("로그 ")) {
+          replier.reply(aI[1] + "로그를 불러오는 중입니다!");
           replier.reply(lL3(msg.substring(3)));
         } else if (msg == "글로벌 로그") {
+          replier.reply(aI[1] + "로그를 불러오는 중입니다!");
           replier.reply(lL3_2("/sdcard/msgbot/GLOBAL_LOG.json"));
         } else if (msg == "저장") {
           replier.reply(wS(sS[sender], sS2[sender].join(ln))? aI[2] + "편집 중이던 스크립트를 저장하였습니다!" : aI[3] + "스크립트 저장에서 문제가 발생하였습니다.." + ln + 
