@@ -196,7 +196,7 @@ function response(room, msg, sender, isGroupChat, replier, imageDB, packageName)
           if (!iN(sS[sender])) {
             var res5 = false;
             try {
-              sS2[sender] = getSrc(lnk);
+              sS2[sender] = getSrc(msg);
               delete sL[sender];
               res5 = true;
             } catch(e) {
