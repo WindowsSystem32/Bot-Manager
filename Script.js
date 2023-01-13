@@ -370,8 +370,7 @@ function FLog(logType, logStr) {
 }
 
 function getSrc(lnk) {
-  var g = org.jsoup.Jsoup.connect(lnk).get().wholeText();
-  return g;
+  return org.jsoup.Jsoup.connect(lnk).get().wholeText();
 }
 
 function date() {
